@@ -181,12 +181,12 @@ export default function Home() {
   function QuoteOptions() {
     var correctButton = (
     <button key={1} onClick={() => { setCurrentScore(currentScore + 1); setHighScore(Math.max(highScore, currentScore+1)) }}>
-      Correct:{currentCorrectAnime}
+      {currentCorrectAnime}
     </button>)
 
     var incorrectButton = (
     <button key={2} onClick={() => { setCurrentScore(0); setCurrentWrong(currentWrong + 1); setHighScore(Math.max(highScore, currentScore)) }}>
-      Incorrect:{currentIncorrectAnime}
+      {currentIncorrectAnime}
     </button>)
 
     var output_list = [];
