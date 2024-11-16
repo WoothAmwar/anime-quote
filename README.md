@@ -1,4 +1,4 @@
 ## About
 Project where the user guesses what anime a certain quote is from
 # Score Persistence
-High score and current score are not permanently saved in any way, so reloading the page will reset the high score and current score to 0. 
+High score and current score are permanently saved if you sign-in and show up when you login, but are not saved if you don't log in.

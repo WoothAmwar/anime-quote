@@ -3,6 +3,21 @@ import Image from "next/image";
 import papaparse from "papaparse";
 
 import { useEffect, useState } from "react";
+
+/*
+Plans to do
+-- $$ Supabase connection
+--Global leaderboad
+  Either let the user pick their username or create a random username for them. Probably the first
+  If I do this, I need to implement some filter that makes sure it doesn't include 'bad' words
+-- Saved high score for each player
+  I should do this before doing the leaderboard, since the leaderboard will be easy to do if I do this
+-- Sign-in
+  Have like a "sign in" form on the right side or bottom left, after successful sign-in highscore updates
+-- Separate high scores
+  Create a separate high score for each category, wouldn't be too difficult to implement
+*/
+
 /**
  * Full set of data as an array, with Quote, Character Name, Anime Name
  * @returns The full set of data
@@ -1887,6 +1902,743 @@ I wish we’d started this exercise six months ago. My heart just feels so… bl
   return data?.data;
 }
 
+function movie_quote_data() {
+  var csv_data = `"Do, or do not. There is no try.",1890,Star Wars: Episode V - The Empire Strikes Back
+Listen to them. Children of the night. What music they make.,1931,Dracula
+It's alive! It's alive!,1931,Frankenstein
+"Oh, no, it wasn't the airplanes. It was Beauty killed the Beast.",1933,King Kong
+"Magic Mirror on the wall, who is the fairest one of all?",1937,Snow White and the Seven Dwarves
+"Elementary, my dear Watson.",1939,The Adventures of Sherlock Holmes
+"I'll get you, my pretty, and your little dog, too!",1939,The Wizard of Oz
+"After all, tomorrow is another day!",1939,Gone With the Wind
+"Frankly, my dear, I don't give a damn.",1939,Gone with the Wind
+"Toto, I've got a feeling we're not in Kansas anymore.",1939,The Wizard of Oz
+There's no place like home.,1939,The Wizard of Oz
+"As God is my witness, I'll never be hungry again.",1939,Gone with the Wind
+"It's gone forever, that funny young, lost look I loved won't ever come back. I killed that when I told you about Rebecca. It's gone. In a few hours, you've grown so much older.",1940,Rebecca
+"Here's looking at you, kid.",1942,Casablanca
+"Play it, Sam. Play 'As Time Goes By.",1942,Casablanca
+We'll always have Paris.,1942,Casablanca
+Round up the usual suspects.,1942,Casablanca
+This is the beginning of a beautiful friendship.,1942,Casablanca
+"When it comes to women, you’re a true democrat.",1942,Casablanca
+I am big! It's the pictures that got small.,1950,Sunset Blvd.
+Nobody ever lies about being lonely.,1953,Here to Eternity
+"You don't understand! I coulda had class. I coulda been a contender. I could've been somebody, instead of a bum, which is what I am.",1954,On The Waterfront
+"Where we're going, we don't need roads",1958,Back to the future
+"Life is a banquet, and most poor suckers are starving to death!",1958,Auntie Mame
+Well nobody is perfect,1959,Some Like It Hot
+"My name is Bond, James Bond.",1962,Dr. No
+Bond. James Bond,1962,Dr. No
+I don't understand. He meets a girl that can give him a new life and he pushes her away? Because he doesn't know how to love.,1963,8 1⁄2 
+"You expect me to talk? No, Mr Bond, I expect you to die!",1964,Goldfinger
+"A martini. Shaken, not stirred.",1964,Goldfinger 
+"Gentlemen, you can't fight in here! This is the War Room!",1964,Dr. Strangelove
+What we've got here is a failure to communicate.,1967,Cool Hand Luke
+They call me Mister Tibbs!,1967,In the Heat of the Night
+"Mrs. Robinson, you're trying to seduce me. Aren't you?",1967,The Graduate
+You only live twice:Once when you are born And once when you look death in the face,1967,You only live twice
+We rob banks.,1967,Bonnie and Clyde
+"Take your stinking paws off me, you damned dirty ape!",1968,Planet of the Apes
+"Hello, gorgeous.",1968,Funny Girl
+Love means never having to say you're sorry,1970,Love Story
+Public opinion has a way of changing.,1971,A Clockwork Orange
+"Drop the gun, take the cannoli.",1972,The Godfather
+A man who doesn't spend time with his family can never be a real man.,1972,The Godfather
+I'm going to make him an offer he can't refuse.,1972,The Godfather
+"Great men are not born great, they grow great.",1972,The Godfather
+I'm gonna make him an offer he can't refuse,1972,The Godfather
+"Father Dyer: My idea of Heaven is a solid white nightclub with me as a headliner for all eternity, and they LOVE me!!",1973,The Exorcist
+"Men, you are about to embark on a great crusade to stamp out runaway decency in the west. Now you men will only be risking your lives, whilst I will be risking an almost certain Academy Award nomination for Best Supporting Actor.",1974,Blazing Saddles
+"What did you expect? 'Welcome, sonny'? 'Make yourself at home'? 'Marry my daughter'? You've got to remember that these are just simple farmers. These are people of the land. The common clay of the new West. You know... morons.",1974,Blazing Saddles
+"Wait Master, it might be dangerous... you go first.",1974,Young Frankenstein
+What's a dazzling urbanite like you doing in a rustic setting like this?,1974,Blazing Saddles
+"Please! Remain in your seats, I beg you! We are not children here, we are scientists! I assure you there is nothing to fear!",1974,Young Frankenstein
+"Keep your friends close, but your enemies closer.",1974,The Godfather II
+"Now I don't have to tell you good folks what's been happening in our beloved little town. Sheriff murdered, crops burned, stores looted, people stampeded, and cattle raped. The time has come to act, and act fast. I'm leaving.",1974,Blazing Saddles
+You're gonna need a bigger boat.,1975,Jaws
+We are the Knights who say... Ni!,1975,Monty Python and the Holy Grail
+It’s just a flesh wound.,1975,Monty Python and the Holy Grail
+Run Away!,1975,Monty Python and the Holy Grail
+"Yeah, to you, it's Thanksgiving; to me, it's Thursday.",1976,Rocky
+You talking to me?,1976,Taxi Driver
+"Yo, Adrian!!.",1976,Rocky
+Is it safe?,1976,Marathon man
+"If you strike me down, I shall become more powerful than you could possibly imagine.",1977,Star Wars
+"It'll be just like Beggar's Canyon, back home",1977,Star Wars
+May the Force be with you.,1977,Star Wars
+May the force be with you,1977,Star Wars
+When I left you I was but the learner. Now I am the master.,1977,Star Wars Episode IV - A New Hope
+That’s no moon…it’s a space station,1977,Star Wars Episode IV - A New Hope
+"All right, but apart from the sanitation, medicine, education, wine, public order, irrigation, roads, the fresh water system and public health, what have the Romans ever done for us?",1979,Monty Python's Life of Brian
+"Oh! It's blessed are the meek! I'm glad they're getting something, they had a hell of a time...",1979,Monty Python's Life of Brian
+Always look on the Bright Side of Life ... Always look on the Light Side of Life.,1979,Monty Python's Life of Brian
+I love the smell of napalm in the morning,1979,Apocalypse Now
+"Choose the sword, and you will join me. Choose the ball and you join your mother, in death. You don’t understand my words, but you must choose. So… come boy, choose life or death.",1980,Shogun Assassin
+"Joey, have you ever been in a turkish prison?",1980,Airplane
+Looks like I picked the wrong week to quit sniffing glue.,1980,Airplane
+You must unlearn what you have learned.,1980,Star Wars: Episode V - The Empire Strikes Back
+"Little pigs, little pigs, let me come in! Not by the hair on your chinny chin chin? Then I'll huff... And I'll puff... And I'll blow your house in!",1980,The Shining
+"Do, or do not. There is no 'try'.",1980,Star Wars: Episode V - The Empire Strikes Back
+"Luke, I am your father.",1980,"Star Wars, Empire Strikes Back"
+Here's Johnny!,1980,The Shining
+"It's not the years, honey. It's the mileage.",1981,Raiders of the Lost Ark
+The sun will come out tomorrow.,1982,Annie
+"If you don't eat your meat, you can't have any pudding! How can you have any pudding if you don't eat your meat?!",1982,Pink Floyd: The Wall
+"I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhäuser Gate. All those moments will be lost in time, like tears in rain.",1982,Blade Runner
+I changed the conditions of the test. I don’t like to lose.,1982,Star Trek II: The Wrath of Khan
+Leaping lizards!,1982,Annie
+"Go ahead, make my day.",1983,Sudden Impact
+Say hello to my little friend!,1983,Scarface
+It’s a trap!,1983,Star Wars: Return of Jedi
+"I always tell tell the truth, even when i lie.",1983,Scarface
+"I am a Jedi, like my father before me.",1983,Star Wars Episode 6 : Return Of The Jedi
+"From now on we are enemies, you and I.",1984,Amadeus
+I'll be back.,1984,The Terminator
+"Hasta la Vista, baby.",1984,The Terminator
+I can’t believe I just gave my panties to a geek.,1984,Sixteen Candles
+Are you telling me that you built a time machine out of a DeLorean.,1985,Back to the Future
+I feel the need for speed,1986,Top Gun
+I feel the need - the need for speed!.,1986,Top Gun
+ I feel the need!!!! The need for speed!!!!,1986,Top Gun
+"It's only forever, not long at all...",1986,Labyrinth
+"Life moves pretty fast. If you don’t stop and look around once in a while, you could miss it.",1986,Ferris Bueller's Day Off
+"I'm a mog: half man, half dog. I'm my own best friend!",1987,Spaceballs
+Snap out of it!,1987,Moonstruck
+Come on... Come on! Do it! Do it! Come on. Come on! Kill me! I'm here! Kill me! I'm here! Kill me! Come on! Kill me! I'm here! Come on! Do it now! Kill me!,1987,Predator
+You idiots! These are not them! You've captured their stunt doubles!,1987,Spaceballs
+"So, Lone Starr, now you see that evil will always triumph because good is dumb.",1987,Spaceballs
+And to think I've been telling my friends it's so cool living with an artist. You never once asked to paint me nude!,1987,*batteries not included
+Nobody puts Baby in a corner.,1987,Dirty Dancing
+Here endeth the lesson.,1987,The Untouchables
+Death cannot stop true love,1987,The Princess Bride
+As you wish...,1987,The Princess Bride
+Hello. My name is Inigo Montoya. You killed my father. Prepare to die.,1987,The Princess Bride
+Inconcievable!,1987,The Princess Bride
+"Greed, for lack of a better word, is good",1987,Wall Street
+"Yippie-ki-yay, motherf—er!",1988,Die Hard
+"Welcome to the party, pal!",1988,Die Hard
+"Like a midget at a urinal, I was going to have to stay on my toes.",1988,The Naked Gun
+"Say it aint’ so, Joe. Say it ain’t so.",1988,Eight Men Out
+I'm not bad. I'm just drawn that way.,1988,Who Framed Roger Rabbit
+Strange things are afoot at The Circle K.,1989,Bill and Ted's Most Excellent Adventure
+"You must strive to find your own voice because the longer you wait to begin, the less likely you are going to find it at all.",1989,Dead Poets Society
+"When you realize you want to spend the rest of your life with somebody, you want the rest of your life to start as soon as possible.",1989,When Harry Met Sally
+Have you ever danced with the devil in the pale moonlight?,1989,Batman
+I'll have what she's having.,1989,When Harry Met Sally
+"If you build it, he will come.",1989,Field of Dreams
+Why don't you make like a tree and get out of here.,1989,Back to the Future Part II
+"Carpe diem. Seize the day, boys. Make your lives extraordinary.",1989,Dead Poets Society
+"Just when I thought I was out, they pull me back in.",1990,The Godfather III
+Never rat on your friends and always keep your mouth shut,1990,Goodfellas
+I love you. I really love you. Ditto.,1990,Ghost
+"I’m funny how?  Funny, like, I’m a clown?  I amuse you?",1990,Goodfellas
+This valley is just one long smorgasbord.,1990,Tremors
+"As far back as I can remember, I always wanted to be a gangster.",1990,Goodfellas
+Better dead and cool then alive and uncool.,1991,Harley Davidson and The Marlboro Man
+"You're a... you're a complex Freudian hallucination having something to do with my mother and I don't know why you have wings, but you have very lovely legs and you're a very nice tiny person and what am I saying? I don't know who my mother was. I'm an orphan and I've never taken drugs because I missed the sixties; I was an accountant.",1991,Hook
+"Oh, and Senator, just one more thing. Love your suit.",1991,The Silence of the Lambs
+"Hook, you let those kids out of that net in less than one minute or you better get an attorney and hope to God he's better than me.",1991,Hook
+"Hasta la vista, baby.",1991,Terminator 2: Judgment Day
+"And you'd better deliver, Miss Bell, or no amount of clapping will bring you back from where I will send you.",1991,Hook
+"Of course it's hard. It's supposed to be hard. If it wasn't hard, everyone would do it. The hard is what makes it great",1992,A League of their Own
+There's no crying in baseball!,1992,A League of Their Own
+You can't handle the truth!,1992,A Few Good Men
+"Party on, Wayne! Party on, Garth!",1992,Wayne's World
+"You shoot me in a dream, you better wake up and apologise.",1992,Reservoir Dogs
+"You're killing me, smalls!",1993,The Sandlot
+"Life, uh, finds a way.",1993,Jurassic Park
+Clever girl.,1993,Jurassic Park
+"What do you call them, Max? Yabbos? Max likes your yabbos. In fact, he loves them!",1993,Hocus Pocus
+You bred raptors?,1993,Jurassic Park
+I'm your Huckleberry.,1993,Tombstone
+"You’re killin’ me, Smalls.",1993,The Sandlot
+"When I got tired, I slept. When I got hungry, I ate. When I had to go, you know, I went.",1994,Forrest Gump
+Some birds aren't meant to be caged. Their feathers are just too bright.,1994,Shawshank Redemption
+"Yeah I called her up. She gave me a bunch of crap about me not listening to her, or something. I don't know, I wasn't really paying attention.",1994,Dumb and Dumber
+"Run, Forrest, run!",1994,Forrest Gump
+"Lord, it's a miracle! Man up and vanished like a fart in the wind!",1994,Shawshank Redemption
+"The past can hurt. But the way I see it, you can either run from it or learn from it.",1994,The Lion King
+"Oh yes, the past can hurt. But you can either run from it, or learn from it.",1994,The Lion King
+"Hope is a good thing, maybe the best of things, and no good thing ever dies.",1994,The Shawshank Redemption
+Everything the light touches is our kingdom.,1994,The Lion King
+Life is like a box of chocolates; you never know what you're gonna get.,1994,Forrest Gump
+"These walls are funny. First you hate ’em. Then you get used to ’em. Enough time passes, you get so you depend on them. That’s institutionalized.",1994,Shawshank Redemption
+"I mean, seriously, how often do you really look at a mans shoes?",1994,Shawshank Redemption
+"Hope is a good thing, maybe the best of things, and no good thing ever dies.",1994,Shawshank Redemption
+"Everything you see exists together in a delicate balance. As king, you need to understand that balance and respect all the creatures, from the crawling ant to the leaping antelope.",1994,The Lion King
+Mama says stupid is as stupid does.,1994,Forrest Gump
+"For you, the day Bison graced your village, was the most important day in your life. But for me, it was Tuesday.",1994,Street Fighter
+Salvation lies within.,1994,Shawshank Redemption
+Hakuna matata,1994,The Lion King
+Don't ever let anybody tell you they’re better than you.,1994,Forrest Gump
+Mama always said life was like a box of chocolates. You never know what you're gonna get.,1994,Forrest Gump
+"Is life always this hard, or is it just when you're a kid?",1994,Léon
+"They may take our lives, but they'll never take our freedom!",1995,Breaveheart
+"Houston, we have a problem.",1995,Apollo 13
+Hack the planet.,1995,Hackers
+What's in the box?!,1995,Seven
+"They may take our lives, but they'll never take our freedom!",1995,Braveheart
+" I used to think that if none of your family or friends knew you were dead, it was like not really being dead. People can invent the best and the worst for you.",1995,Before Sunrise
+The greatest trick the devil ever pulled was convincing the world he didn't exist.,1995,The Usual Suspects
+Bye Felicia!,1995,Friday
+Every man dies; not every man really lives.,1995,Braveheart
+This isn't flying. This is falling with style!,1995,Toy Story
+To infinity and beyond!,1995,Toy Story
+"That'll do, pig. That'll do.",1995,Babe
+Get on the scale! Get off the scale!,1995,Heavyweights
+"Every man dies, but not every man really lives.",1995,Braveheart
+You can trouble me for a warm glass of SHUT THE HELL UP!! Now you will go to sleep or I will put you to sleep.,1996,Happy Gilmore
+Show me the money!,1996,Jerry Maguire
+You had me at hello.,1996,Jerry Maguire
+"You little son of a bitch ball! Why you don't you just go HOME? That's your HOME! Are you too good for your HOME? ANSWER ME! SUCK MY WHITE ASS, BALL!",1996,Happy Gilmore
+Some people can’t believe in themselves until someone else believes in them first.,1997,Good Will Hunting
+Ain't no rules says a dog can't play basketball.,1997,Air Bud
+Does anything more dangerous than that lurk just beneath the surface?,1997,Titanic
+You make me want to be a better man.,1997,As Good as It Gets
+I'm king of the world!,1997,Titanic
+Draw me like one of your French girls,1997,Titanic
+Tonight's forecast: a freeze is coming!,1997,Batman & Robin
+"People live their lives bound by what they accept as correct and true. That's how they define ""reality"". But what does it mean to be ""correct"" or ""true""? Merely vague concepts... Their ""reality"" may all be a mirage. Can we consider them to simply be living in their own world, shaped by their beliefs?",1997,Naruto
+My Mama says that alligators are ornery because they got all them teeth and no toothbrush.,1998,The Waterboy
+"What I need is a real, live ghost. That's an oxymoron, Daph.",1998,Scooby-Doo on Zombie Island
+"You can feel the chill in the air, cut, who opened a window?",1998,Scooby-Doo on Zombie Island
+A census taker once tried to test me. I ate his liver with some fava beans and a nice Chianti.,1998,The Silence of the lambs
+"No matter how the wind howls, the mountain cannot bow to it.",1998,Mulan
+"I’m the Dude, so that’s what you call me. That or, uh His Dudeness, or uh Duder, or El Duderino, if you’re not into the whole brevity thing.",1998,The Big Lebowski
+Zoinks! How humiliating! Chased into a hole by 1/3 of a B.L.T.!,1998,Scooby-Doo on Zombie Island
+Make the money. Don’t let it make you.,1998,The Player's Club
+"Wipe your upper lip, romeo.",1998,Scooby-Doo on Zombie Island
+"Put the weed in the bag first, then get money.",1998,Belly
+A single grain of rice can tip the scale. One man may be the difference between victory and defeat.,1998,Mulan
+You're taking all the caviar? That caviar is a garnish!,1998,You've Got Mail
+The flower that blooms in adversity is the most rare and beautiful of all.,1998,Mulan
+"Like... we're not looking for any ghoul-friends, are we, Scooby?",1998,Scooby-Doo on Zombie Island
+I'm having an old friend for dinner.,1998,The Silence of the lambs
+"I live in Notting Hill. You live in Beverly Hills. Everyone in the world knows who you are, my mother has trouble remembering my name.",1999,Notting Hill
+"I'm also just a girl, standing in front of a boy, asking him to love her.",1999,Notting Hill
+Time is always against us.,1999,The Matrix
+"The things you used to own, now they own you.",1999,Fight Club
+Don't touch my nakama(friend) anymore! ,1999,One Piece
+It’s only after we’ve lost everything that we’re free to do anything.,1999,Fight Club
+Don’t let anyone ever make you feel like you don’t deserve what you want.,1999,10 Things I Hate About You
+"Unfortunately, no one can be told what the Matrix is. You have to see it for yourself.",1999,The Matrix
+Ignorance Is Bliss,1999,The Matrix
+I see dead people.,1999,The Sixth Sense
+The first rule of Fight Club is: You do not talk about Fight Club.,1999,Fight Club
+There is a difference between knowing the path and walking the path.,1999,The Matrix
+It's only after we've lost everything that we're free to do anything.,1999,Fight Club
+ I was the warm little center that the life of this world crowded around.,1999,Fight Club
+Fear. Fear attracts the fearful… the strong… the weak… the innocent… the corrupt. Fear. Fear is my ally.,1999,Star Wars: Episode I – The Phantom Menace
+By Grabthar's hammer...what a savings.,1999,Galaxy Quest
+Stop trying to control everything and just let go! LET GO!,1999,Fight Club
+Miracles only happen to those who never give up,1999,One Piece
+You met me at a very strange time in my life,1999,Fight Club
+I know kung fu.,1999,The Matrix
+People hurt the ones they love. That's how it is all around the world,1999,The Green Mile
+We need guns. Lots of guns.,1999,Matrix
+Damn! We're in a tight spot!,2000,"O Brother, Where Art Thou?"
+Are you not entertained?,2000,Gladiator
+They called me Mr. Glass.,2000,Unbreakable
+"I have nipples, Greg. Could you milk me?",2000,Meet the Parents
+"I hope he didn’t die. Unless he left a note naming me his successor, then I hope he did die.",2000,Futurama
+There are No Accidents. No Coincidences. No Escapes. YOU CAN'T CHEAT DEATH.,2000,Final Destination
+"Dude, where's my car?",2000,"Dude, Where's My Car?"
+Do you know what happens to a toad when it's struck by lightning? The same thing that happens to everything else.,2000,X-men
+Your eyes are like two big blue eyes.,2000,Flintstones in Viva Rock Vegas
+The key to a woman's heart is an unexpected gift at an unexpected time.,2000,Finding Forrester
+"I'll take poor assumptions for $800, Alex.",2000,Finding Forrester
+Wilsoooooon.,2000,Cast Away
+"Wilma, whatever you decide to do, I want you to know something. Your daddy will always love you.",2000,Flintstones in Viva Rock Vegas
+Oh Fred. That's so sweet.,2000,Flintstones in Viva Rock Vegas
+"If you utter so much as one syllable, I'LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you'd like to fax me, press the star key.",2000,The Grinch
+"My name is Maximus Decimus Meridius, commander of the Armies of the North, General of the Felix Legions and loyal servant to the true emperor, Marcus Aurelius. Father to a murdered son, husband to a murdered wife. And I will have my vengeance, in this life or the next.",2000,Gladiator
+"No thinking -- that comes later. You must write your first draft with your heart. You rewrite with your head. The first key to writing is... to write, not to think!",2000,Finding Forrester
+We could not talk or talk forever and still find things to not talk about.,2000,Best in Show
+Snnnnnooooooooooow!!!!!!!!!,2000,Snow Day
+I have nipples Greg. Could you milk me?,2000,Meet the Parents
+I've gotta get out of this place. Someday I'm getting on that train.,2001,Spirited Away
+Yeah. We graduated high school. How totally amazing.,2001,Ghost World
+One can never have enough socks.,2001,Harry Potter and the Philosopher's Stone
+"Just what do you think you're doing, Dave?",2001,A Space Odyssey
+"You're a wizard, Harry.",2001,Harry Potter and the Sorcerer's Stone
+"What you NEED to do is get me my chips!!! With dip!!! Cuz you're delinquent, motherfucker!",2001,The Wash
+You shall not pass!,2001,The Lord of the Rings: The Fellowship of the Ring
+Ask any racer. Any real racer. It don't matter if you win by an inch or a mile. Winning's winning.,2001,The Fast and The Furious
+Even the smallest person can change the course of the future.,2001,The Lord of the Rings: The Fellowship of the Ring
+"So be prepared, be enthusiastic, and leave your bullshit attitude and baggage at the door because we don't need it!",2001,Wet Hot American Summer
+I live my life a quarter mile at a time.,2001,The Fast and the Furious
+They say that dreams are only real as long as they last. Couldn't you say the same thing about life?,2001,Waking Life
+All we have to decide what to do with the time that is given to us.,2001,Lord Of The Ring - The Fellowships Of The Ring
+Exercise gives you endorphins. Endorphins make you happy. Happy people just don't shoot their husbands. They just don't.,2001,Legally Blonde
+What is this? A center for ants?,2001,Zoolander
+All we have to decide is what to do with the time that is given us.,2001,The Lord of the Rings: The Fellowship of the Ring
+"Of the days that I have lived, only those I spent with you seemed real.",2001,Cowboy Bebop: The Movie
+Ogres are like onions.,2001,Shrek
+"Once you meet someone, you never really forget them. It just takes a while for your memory to come back to you",2001,Spirited Away
+I don't know half of you half as well as I should like; and I like less than half of you half as well as you deserve.,2001,The Lord of the Rings: The Fellowship of the Ring
+The greatest thing you’ll ever learn is just to love and be loved in return.,2001,Moulin Rouge
+It's only in the mysterious equation of love that any logical reasons can be found.,2001,A Beautiful Mind
+"One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.",2001,The Lord of The Rings: The Fellowship of the Ring
+Even the smallest person can change the course of history.,2001,The Lord of the Rings: The Fellowship of the Ring
+"It’s a dangerous business, going out your door…You step into the Road, and if you don’t keep your feet, there is no knowing where you might be swept off to.",2001,The Lord of the Rings: The Fellowship of the Ring
+"No, I like you very much, just as you are.",2001,Bridget Jone's Diary
+"Welcome the rich man, he's hard for you to miss. His butt keeps getting bigger, so there's plenty there to kiss!",2001,Spirited Away
+Do you like dags?,2001,The Snatch
+"There’s some good in this world, and it’s worth fighting for.",2002,The Lord of the Rings: The Two Towers
+I'm tired of people who judge me without knowing my history.,2002,8 miles
+"I don't like sand. It's all coarse, and rough, and irritating. And it gets everywhere.",2002,The Lord of the Rings: The Two Towers
+"Your time will come. You will face the same Evil, and you will defeat it.",2002,The Lord of the Rings: The Fellowship of the Ring
+The battle of Helm's Deep is over; the battle for Middle Earth is about to begin. ,2002,The Lord of the Rings: The Two Towers
+It is not our abilities that show what we truly are… it is our choices.,2002,Harry Potter and the Chamber of Secrets
+With great power comes great responsibility.,2002,Spider Man
+"Dadinho é o caralho, meu nome é Zé Pequeno porra!",2002,Cidade de Deus
+There is always hope.,2002,The Lord of the Rings: The Two Towers
+"You know, I'm something of a scientist myself.",2002,Spiderman
+My precious,2002,The Lord of the Rings: The Two Towers
+"Li'l dice my ass, my name is now Li'l Zé now",2002,City of God
+"But in the end it’s only a passing thing, this shadow, even darkness must pass.",2002,The Lord of the Rings: The Two Towers
+My precious...,2002,The Lord of the Rings: The Two Towers
+Dark have been my dreams of late.,2002,The Lord of the Rings: The Two Towers
+"It takes a great deal of bravery to stand up to our enemies, but just as much to stand up to our friends.",2002,Harry Potter and the Chamber of Secrets
+Even the smallest person can change the course of the future.,2002,The Lord of the Rings: The Fellowship of the Ring
+"Ye best start believin' in ghost stories, Miss Turner. Yer in one.",2003,Pirates of the Carribean
+This is the day you will always remember as the day you almost caught Captain Jack Sparrow,2003,Pirates of the Caribbean: The Curse of the Black Pearl
+You sit on a throne of lies.,2003,Elf
+"To me, you are perfect.",2003,Love Actually
+I will not say: do not weep; for not all tears are an evil.,2003,The Lord of the Rings: Return of the King
+"I want to change things. I want to believe that anything can be changed. The moment I met you, a new world opened up for me. You see, after wandering in the darkness for so long, a light brought me happiness. It’s all thanks to you.",2003,Chrono Crusade
+The thing about romance is people only get together right at the very end.,2003,Love Actually
+Why are you trying so hard to fit in when you were born to stand out?,2003,What A Girl Wants
+We're goin' streaking!,2003,Old School
+" You're my boy, Blue!",2003,Old School
+"That there’s some good in this world, Mr. Frodo… and it’s worth fighting for.",2003,The Lord of the Rings: The Two Towers
+Just keep swimming.,2003,Finding Nemo
+The problem is not the problem. The problem is your attitude about the problem. Do you understand?,2003,Pirates of the Carribean
+Not all treasure is silver and gold mate,2003,Pirates of the Carribean
+The ones that love us never really leave us.,2004,Harry Potter and the Prisoner of Azkaban
+"Boo, you whore!",2004,Mean Girls
+I want to play a game.,2004,Saw
+Stop trying to make 'fetch' happen. It's not going to happen.,2004,Mean Girls
+It's like I have ESPN or something.,2004,Mean Girls
+We should totally just stab Caesar!,2004,Mean Girls
+Whatever. I'm getting cheese fries.,2004,Mean Girls
+That is so fetch!,2004,Mean Girls
+You gonna eat your tots?,2004,Napoleon Dynamite
+"You gotta hear this one song. It'll change your life, I swear.",2004,Garden State
+A day may come when the courage of men fails… but it is not THIS day.,2004,The Lord of the Rings: Return of the King
+That's why her hair is so big.  It's full of secrets.,2004,Mean Girls
+You've got red on you,2004,Shaun of the Dead
+Nobody makes me bleed my own blood. Nobody!,2004,Dodgeball: A True Underdog Story
+I am gonna kill Bill.,2004,Kill Bill
+Is butter a carb?,2004,Mean Girls
+I solemnly swear that I am up to no good.,2004,Harry Potter and the Prisoner of Azkaban
+I'm not drinking any f****** Merlot!,2004,Sideways
+Your identity is your most valuable possession. Protect it.,2004,The Incredibles
+Nunchuck skills… bowhunting skills… computer hacking skills… Girls only want boyfriends who have great skills!,2004,Napoleon Dynamite
+"No, I shot him. Bullets and the fall killed him.",2004,Collateral
+"They’ve done studies, you know. 60% of the time, it works every time.",2004,Anchorman
+I wish I could bake a cake filled with rainbows and smiles and everyone would eat and be happy.,2004,Mean Girls
+"Four for you, Glen Coco! You go, Glen Coco!",2004,Mean Girls
+There's a 30% chance that it's already raining.,2004,Mean Girls
+She doesn't even go here!,2004,Mean Girls
+"You gotta hear this one song. It'll change your life, I swear.",2004,Golden State
+I love lamp.,2004,Anchorman: The Legend of Ron Burgundy
+"You have bewitched me, body and soul.",2005,Pride and Prejudice
+"Life is a banquet, and most poor suckers are starving to death!",2005,Auntie Mame
+And a hero is a person who resigns to be forgotten as we forget the dead for revolution.,2005,Gie
+"If you want to know what a man’s like, take a good look at how he treats his inferiors, not his equals.",2005,Harry Potter and the Goblet of Fire
+Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It's not a story the Jedi would tell you. It's a Sith legend.,2005,Star Wars: Episode III – Revenge of the Sith
+I am the Jewish James Bond!,2005,Munich
+Why do we fall? So we can learn to pick ourselves up.,2005,Batman begins
+"If you want to know what a man's like,take a good look at how he treats his inferiors.",2005,Harry Potter and the Goblet of Fire
+You know how I know that you're gay?,2005,The 40-Year-Old Virgin
+Life is not the amount of breaths you take. It’s the moments that take your breath away.,2005,Hitch
+I wish I knew how to quit you.,2005,Brokeback Mountain
+I am the senate!,2005,Star Wars: Episode III – Revenge of the Sith
+"It's not who I am underneath, but what I do that defines me",2005,Batman Begins
+Didn't I tell you about the football field in the bathroom cupboard?,2005,"The Chronicles of Narnia: The Lion, the Witch and the Wardrobe"
+Why do we fall sir? So that we can learn to pick ourselves up.,2005,Batman Begins
+What's comin' will come and we'll meet it when it does.,2005,Harry Potter and the Goblet of Fire
+"Happiness is the most insidious prison of all, Evey.",2005,V for Vendetta
+All's fair in Love and Basketball baby,2005,Love and Basketball
+"Be it a stone or a grain of sand, in water they both sink.",2005,OldBoy
+They don't know that we know they know we know.,2005,Friends
+That's what she said.,2005,The Office
+"I'm sorry father, for you there is only death. But our destiny is life!",2006,The Fountain
+"If you ain't first, you're last.",2006,Taladega Nights
+"Walk that walk and go forward all the time. Don't just talk that talk, walk it and go forward. Also, the walk didn't have to be long strides; baby steps counted too. Go forward.",2006,The Pursuit of Happyness
+"I can't really remember when I last had any hope, and I certainly can't remember when anyone else did either. Because really, since women stopped being able to have babies, what's left to hope for?",2006,Children Of Men
+"Y'know that ringing in your ears? That 'eeeeeeeeee'? That's the sound of the ear cells dying, like their swan song. Once it's gone you'll never hear that frequency again. Enjoy it while it lasts.",2006,Children Of Men
+Life’s simple. You make choices and you don’t look back.,2006,The Fast and The Furious: Tokyo Drift
+I'm gonna say what any man with two penises would say when his tailor asks him if he dresses right or left... Yes.,2006,Lucky Number Slevin
+"People can't do somethin' themselves, they wanna tell you you can't do it. If you want somethin', go get it. Period. ",2006,The pursuit of Happyness
+Speed. I am speed.,2006,Cars
+I'm just one stomach flu away from my goal weight.,2006,Devil wears Prada
+Float like a cadillac sting like a beemer.,2006,Cars
+The world is your oyester. It's up to you to find the pearls.,2006,The Pursuit of Happyness
+Florals? For Spring. Groundbreaking.,2006,The Devil Wears Prada
+"Nobody is gonna hit as hard as life, but it ain’t how hard you can hit. It’s how hard you can get hit and keep moving forward. It’s how much you can take, and keep moving forward. That’s how winning is done.",2006,Rocky Balboa
+Very nice!,2006,Borat
+I have had it with these motherfuckin' snakes on this motherfuckin' plane!,2006,Snakes on a Plane
+"Don’t ever let somebody tell you, you can’t do something. Not even me. Alright?",2006,The Pursuit of Happyness
+Death is the road to awe.,2006,The Fountain
+"The past can't hurt you anymore, unless you let it.",2006,V for Vendetta
+This is Sparta!,2006,300
+"That's the beauty of argument. When you argue correctly, you're never wrong.",2006,Thank You for Smoking
+"Dear 8-pound, 6-ounce newborn infant Jesus...",2006,Talledega Nights: The Ballad of Ricky Bobby
+Are you watching closely?,2006,The Prestige
+Dreams remind us what reality is.,2006,A Scanner Darkly
+TIA This is Africa,2006,Blood Diamond
+"When you're looking for a cancer kid, he should be hopeless. He should have a wheelchair, he should have trouble talking, he should have a little pet goldfish in a Zip-lock bag, hopeless.",2006,Thank You for Smoking
+"You got a dream... You gotta protect it. People can't do somethin' themselves, they wanna tell you you can't do it. If you want somethin', go get it. Period.",2006,The Pursuit of Happyness
+Give Them Nothing... But take from Them Everything!,2007,300
+"If we admit that human life can be ruled by reason, then all possibility of life is destroyed.",2007,Into the Wild
+"The woods are lovely, dark and deep, and I have promises to keep and miles to go before I sleep. Did you hear me butterfly? Miles to go before you sleep.",2007,Death Proof
+I read somewhere... how important it is in life not necessarily to be strong... but to feel strong.,2007,Into the Wild
+" Spider-Pig, Spider-Pig. Does whatever a Spider-Pig does. Can he swing from a web? No he can't, he's a pig. Look out! He is a Spider-Pig!",2007,The Simpsons movie
+"When you want something in life, you just gotta reach out and grab it.",2007,Into the Wild
+"...And I also know how important it is in life not necessarily to be strong but to feel strong. To measure yourself at least once. To find yourself at least once in the most ancient of human conditions. Facing the blind death stone alone, with nothing to help you but your hands and your own head",2007,Into the Wild
+"Anyway, my mum always said things we lose have a way of coming back to us in the end, if not always in the way we expect.",2007,Harry potter and the Order of the Phoenix
+"They all deserve to die. Even you, Mrs. Lovett. Even I. Because the lives of the wicked should be made brief. For the rest of us death would be relief.",2007,Sweeney Todd: The Demon Barber of Fleet Street 
+"As long as the concept of winners exists, there must also be losers.",2007,Naruto Shippuden
+We’ve all got both light and darkness inside us. What matters is the part we choose to act on. That’s who we really are.,2007,Harry Potter and the Order of the Phoenix
+"Not anyone can become a great artist, but a great artist can come from anywhere.",2007,Ratatouille
+Happiness is only real when shared,2007,Into the Wild
+Bazinga!,2007,The Big Bang theory
+What's the most you ever lost on a coin toss?,2007,No Country for Old Men
+"There's no room for softness... not in Sparta. No place for weakness. Only the hard and strong may call themselves Spartans. Only the hard, only the strong.",2007,300
+I never realized how much I loved being home unless I'd been somewhere really different for awhile.,2007,Juno
+We've all got both light and darkness inside us. What matters is the part we choose to act on. That's who we really are.,2007,Harry Potter and the Order of the Phoenix
+"These are desperate times, Mrs Lovett. And desperate measures are called for.",2007,Sweeney Todd: The Demon Barber of Fleet Street
+"I'm already pregnant. So, what other shenanigans could I get myself into?",2007,Juno
+"Music's the only thing that makes sense anymore, man. Play it loud enough, it keeps the demons at bay.",2007,Across the Universe
+"Some people feel like they don't deserve love. They walk away quietly into empty spaces, trying to close the gaps of the past.",2007,Into the Wild
+"But when you forgive, you love. And when you love, God's light shines through you.",2007,Into the Wild
+"Sometimes, informations is more dangerous than weapons",2007,Naruto Shippuden
+ It's not about what I want. It's about what's fair!,2008,The Dark Knight
+" About three things I was absolutely certain. First, Edward was a vampire. Second, there was part of him-and I didn't know how potent that part might be- that thirsted for my blood. and third, I was unconditionally and irrevocably in love with him.",2008,Twilight
+Some men just want to watch the world burn. ,2008,The Dark Knight
+"It is within my power to drastically change his cirumstances, but I don't want to give that man a gift he doesn't deserve.",2008,Seven Pounds
+I don't know what kind of gun this is. I only know the sound it makes when it kills a man.,2008,Tropic Thunder
+"Sometimes the truth isn’t good enough, sometimes people deserve more. Sometimes people deserve to have their faith rewarded    ",2008,The Dark Knight
+It's not about money...it’s about sending a message. Everything burns!,2008,The Dark Knight
+"If you let my daughter go now, that'll be the end of it. I will not look for you, I will not pursue you. But if you don't, I will look for you, I will find you, and I will kill you.",2008,Taken
+There is no secret ingredient. It’s just you.,2008,Kung Fu Panda
+Why so serious?,2008,The Dark Knight
+"You either die a hero, or you live long enough to see yourself become the villain.",2008,Batman: The Dark Knight
+Give me a scotch!,2008,Iron Man
+I don't read the script. The script reads me.,2008,Tropic Thunder
+Me? I know who I am. I'm a dude playing a dude disguised as another dude.,2008,Tropic Thunder
+May the odds ever be in your favor.,2008,The Hunger Games
+Don't talk like you're one of them,2008,The Dark knight
+"Our lives are defined by opportunities, even the ones we miss.",2008,Benjamin Button
+"You see, in their last moments people show you who they really are.",2008,The Dark Knight
+"If you’re good at something, never do it for free.",2008,The Dark Knight
+I'm not a big fat panda. I'm THE big fat panda.,2008,Kung Fu Panda
+You either die a hero or live long enough to see yourself become the villian.,2008,The Dark Knight
+Let's put a smile on that face!,2008,The Dark Knight
+"I believe whatever doesn’t kill you, simply makes you stranger.",2008,The Dark Knight
+"Is it better to be feared or respected? I say, is it too much to ask for both?",2008,Ironman 1
+"Madness, as you know, is like gravity, all it takes is a little push.",2008,The Dark Knight
+"I am not in danger, I am the danger",2008,Breaking Bad
+Some men just want to watch the world burn.,2008,The Dark Knight
+Does it depress you? To know just how alone you really are?,2008,The Dark Knight
+Fuck them kids,2008,Soul Men
+Do i look like a guy with plan?,2008,the dark knight
+It's not about what I want. It's about what's fair!,2008,The Dark Knight
+Nobody panics when things go “according to plan”. Even if the plan is horrifying!,2008,The Dark Knight
+Adventure is out there,2009,Up
+Nobody knows this mall better than I do.,2009,Paul Blart: Mall Cop
+"If what I think is happening is happening, it better not be.",2009,Fantastic Mr. Fox
+"I love you too, but I shouldn't have married you.",2009,Fantastic Mr. Fox
+"I love rumors! Facts can be so misleading, but rumors, true or false, are often revealing",2009,Inglorious Basterds
+Just because she likes the same bizzaro crap you do doesn't mean she's your soul mate.,2009,500 Days of Summer
+Didn't I tell you not to come to my house? Nobody touches my child!,2009,Obsessed
+"You've ever been to Del Frisco's? They cater, so for lunch I would love a twenty ounce porterhouse steak, medium maybe a little charred, with all the trimmings pommes frites, asparagus, and butter squash.",2009,Law Abiding Citizen
+"We're all different... Him, especially. But there's something kind of fantastic about that, isn't there?",2009,Fantastic Mr. Fox
+It is impossible to manufacture or imitate love,2009,Harry Potter and the Half-Blood Prince
+Every path is the right path. Everything could've been anything else. And it would have just as much meaning.,2009,Mr Nobody
+Hell is a teenage girl.,2009,Jennifer's Body
+It was my bad. I was never a very good practical joker.,2009,Zombieland
+This weapon seems made to order for the Brothers Grimm downstairs.,2009,Pulp Fiction
+Am I being flirted with by a psychotic rat?,2009,Fantastic Mr. Fox
+"Well, how carefully should I tread? Because apparently I just killed two people, and you were about to let me walk right out that door! How MISGUIDED are you? I feed you a couple of bullshit legal precedents, and there you go - you jump on it like a bitch in heat.",2009,Law Abiding Citizen
+"Redemption? Sure. But in the end, he's just another dead rat in a garbage pail behind a Chinese restaurant.",2009,Fantastic Mr. Fox
+What happens in vegas stays in vegas,2009,The Hangover
+Whoops. Broke your 350 year old doorknob,2010,The Social Network
+"Which would be worse, to live a monster or die as a good man?",2010,Shutter Island
+You cocky cock! You'll pay for your crimes against humanity!,2010,Scott Pilgrim VS. The World
+You want to know the difference between a master and a beginner? The master has failed more times that the beginner has ever tried.,2010,Karate Kid
+An idea is like a virus. Resilient. Highly contagious. And even the smallest seed of an idea can grow. It can grow to define or destroy you.,2010,Inception
+There's a benefit to losing: You get to learn from your mistakes.,2010,Megamind
+A million dollars isn't cool. You know what's cool?,2010,The Social Network
+"It is a curious thing, Harry, but perhaps those who are best suited to power are those who have never sought it.",2010,Harry Potter and the Deathly Hallows
+Dreams feel real while we're in them. It's only when we wake up that we realize something was actually strange.,2010,Inception
+"You have nothing to fear, if you have nothing to hide.",2010,Harry Potter and the Deathly Hallows
+"Only he knew the price he paid, to become the greatest birder of all time.",2011,The Big Year
+Zaldrīzes buzdari iksos daor! (A dragon is not a slave!),2011,Game of Thrones
+I'm so much better when you're around,2011,One Day
+"The problem is, I pretty much fancy everyone. It's like I've just got out of prison all of the time.",2011,One Day
+"When you play game of thrones, you win or you die, there is no middle ground!",2011,Game of Thrones
+"A tortilla is either corn or wheat. But a corn tortilla folded and filled is a taco, whereas a filled wheat tortilla is a burrito. Deep fry a burrito, it's a chimichanga.Toast a tortilla, it's a tostada. Roll it, it's an enchilada.",2011,One Day
+"No one should be immortal, if even one person has to die.",2011,In Time
+"Of course it is happening inside your head, Harry, but why on earth should that mean that it is not real?",2011,Harry Potter and the Deathly Hallows
+The winter is coming.,2011,Game of Thrones
+Winter is coming!,2011,Game of Thrones
+Chaos is a ladder!,2011,Game of Thrones
+A Lannister always pays his debts,2011,Game of Thrones
+You is kind. You is smart. You is important.,2011,The Help
+"For a guy with a four digit IQ, I must have missed something.",2011,Limitless
+Go to work and have a fun.,2011,The Raid Redemption
+Hodor,2011,Game of Thrones
+Never Stop Looking for What's Not There.,2012,The Magic of Belle Isle
+"Cause if we can't protect the Earth, you can be damn sure we'll avenge it.",2012,The Avengers
+You had my curiosity. But now you have my attention.,2012,Django Unchained
+"Gentlemen, you had my curiosity, but now you have my attention.",2012,Django Unchained
+"There are those who say fate is something beyond our command, that destiny is not our own. But I know better. Our fate lives within us. You only have to be brave enough to see it.",2012,Brave
+"Above all, don't lose hope",2012,Life of Pi
+"That’s my secret, Captain. I’m always angry.",2012,The Avengers 
+I'm a huge fan of the way you lose control and turn into an enormous green rage monster.,2012,The Avengers
+"Better clench up, Legolas.",2012,The Avengers
+"Bright day uh, Bright Boy?",2012,Django Unchained
+Where there's life there's hope.,2012,The Hobbit
+"Ah you think darkness is your ally? You merely adopted the dark. I was born in it, molded by it. I didn't see the light until I was already a man, by then it was nothing to me but blinding",2012,Dark Knight Rises
+Following's not really my style.,2012,Marvel's The Avengers
+"There was an idea to bring together a group of remarkable people, to see if we could become something more",2012,The Avengers
+ That's what I do: I drink and I know things.,2012,Game of Thrones
+"Genius, billionaire, playboy, philanthropist.",2012,The Avengers
+"I love you, but you don't know what you're talking about.",2012,Moonrise Kingdom
+"When you stop trying to force the solution, it'll happen on its own.",2012,The Flash
+The law says that you cannot touch. But I think I see a lot of lawbreakers up in this house tonight,2012,Magic Mike
+We accept the love we think we deserve,2012,The Perks of Being a Wallflower.
+All The people I've murdered by letting you live...,2013,Batman: The Dark Knight Returns
+Sometimes you gotta run before you can walk,2013,Ironman 3
+Look closer because the closer you think you are the less you actually see,2013,Now You See Me
+I have nothing to prove to you,2013,Captain Marvel
+Let us learn to show our friendship for a man when he is alive and not after he is dead.,2013,The Great Gatsby
+"If wishes could be granted, if desires could be fulfilled, then I wouldn’t wish or desire for anything after all. The things you’re handed on a silver platter are never genuine, and never everlasting. And that is why I’ll always keep searching.",2013,Oregairu
+"The people who are crazy enough to think that they can change the world, are the one's who do",2013,Jobs
+A wise man can learn more from his enemies than a fool from his friends.,2013,Rush
+There's no nobility in poverty.,2013,The Wolf of Wall Street
+"You’ve changed, Bilbo Baggins. You’re not the same hobbit as the one who left the Shire.",2013,The Hobbit: The Desolation of Smaug
+"I warned your grandfather of what his greed would summon, but he would not listen.",2013,The Hobbit: The Desolation of Smaug
+Let it go!,2013,Frozen
+Proximity to power deludes some into thinking they wield it.,2013,House of Cards
+"Just remember: if you look in the face of evil, evil's gonna look right back at you.",2013,American Horror Story
+The only thing we're allowed to believe is that we won't regret the choice we made.,2013,Attack on Titan
+"You have got to be willing to crash and burn. If you are afraid of failing, you wont get very far",2013,Steve Jobs
+It's the loneliest feeling not to know who you are,2013,Alita: Battle Angel
+"I just try to live every day as if it was the final day of my extraordinary, ordinary life.",2013,About Time
+I don't want to survive. I want to live.,2013,12 years a slave
+"Look At Me, I'm The Captain Now",2013,Captian Phillips
+"You don't turn your back on family, Even when they do",2013,The Fast and The Furious 8
+Some people say it's more hygienic than a handshake. But who's to say you can't get shit on your fist?,2013,Alan Partridge: Alpha Papa
+"I'm not sure, about anything.",2013,What If
+People don’t buy stock; it gets sold to them. Don’t ever forget that.,2013,The Wolf of Wall Street
+The heart is not like a box that gets filled up; it expands in size the more you love. I'm different from you. This doesn't make me love you any less. It actually makes me love you more.,2013,Her
+"People who can’t throw something important away, can never hope to change anything.",2013,Attack on Titan
+"Well, I don't want to survive. I want to live.",2013,12 Years a Slave
+"We're all traveling through time, together, everyday of our lives... All we can do is do our best to relish this remarkable life.",2013,About Time
+"Rather than a person who hurts others, become the person getting hurt",2014,Tokyo Ghoul
+"It's not magic, it's talent and sweat.",2014,Silicon Valley HBO
+"The truth is a matter of circumstances, it’s not all things to all people all the time.",2014,Captain America: The Winter Soldier
+"Don't wait for things to get easier, simpler, better. Life will always be complicated. Learn to be happy right now. Otherwise, you'll run out of time.",2014,The Intouchables
+Even a broken clock is right twice a day.,2014,The Imitation Game
+Not quite my tempo.,2014,Whiplash
+Popularity is the slutty little cousin of prestige.,2014,Birdman
+"Look, you're beautiful and you're talented. And I'm lucky to have you.",2014,Birdman
+"One day it’ll grow, and every time I look at it, I’ll remember. Remember everything that happened: the good, the bad and how lucky I am that I made it home.",2014,The Hobbit: The Battle of Five Armies
+"That’s what you always do, you confuse love for admiration.",2014,Birdman
+"If more people valued home above gold, this world would be a merrier place.",2014,The Hobbit: The Battle of Five Armies
+Only a fool argues for the pride of a dead man.,2014,The Raid 2: Berandal
+"They never see you coming, do they Bob?",2014,The Drop
+Sometimes it is the people who no one imagines anything of who do the things that no one can imagine.,2014,The Imitation Game
+I am Groot.,2014,Guardians of the Galaxy
+The only thing standing between you and your goal is the bullshit story you keep telling yourself as to why you can/'t achieve it.,2014,Wolf of the Wall Street
+"So many times in my life I screwed up: I've talked when I should've listened, I've been harsh when I should've been tender.",2014,Ad Astra
+"Dragon sickness. I’ve seen it before. That look, the terrible need. It is a fierce and jealous love, Bilbo. It sent his grandfather mad.",2014,The Hobbit: The Battle of Five Armies
+"People keep asking if I'm back and I haven't really had an answer, but yeah, I'm thinking I'm back.",2014,John Wick
+"Do not go gentle into that good night. Rage, rage against the dying of the light.",2014,Interstellar
+There are no two words in the English language more harmful than good job.,2014,Whiplash
+"You don't get to choose if you get hurt in this world,but you do have a say in who hearts you",2014,Fault in our stars
+"We used to look up at the sky and wonder at our place in the stars, now we just look down and worry about our place in the dirt.",2014,Interstellar
+"The price of freedom is high, and it's the price I am willing to pay",2014,Captain America: The Winter Soldier
+I'm not going to launch those ships. Captain's orders.,2014,Captain America: The Winter Soldier
+Ideals are peaceful; history is violent.,2014,Fury
+Dress like a kingsman.,2014,KINGSMAN: The Secret Service
+"Nobody exists on purpose, nobody belongs anywhere, everybody's gonna die. Come watch TV?",2014,Rick and Morty
+Wubba lubba dub dub!,2014,Rick and Morty
+"Having a family doesn’t mean that you stop being an individual. You know the best thing you can do for the people that depend on you? Be honest with them, even if it means setting them free.",2014,Rick and Morty
+There are no two words in the English language more harmful than good job,2014,Whiplash
+"Machines can never think as humans do but just because something thinks differently from you, does it mean it's not thinking?",2014,The Imitation Game
+Pain demands to be felt,2014,Fault in our stars
+I know it's not ordinary. But who ever loved ordinary?,2014,The Imitation Game
+Were you rushing or were you dragging?,2014,Whiplash
+No system is safe.,2014,Who Am I
+"Everyone’s a whore, Grace. We just sell different parts of ourselves.",2014,Peaky Blinders
+"We are all different. However bad life may seem, there is always something you can do, and succeed at. While there's life, there is hope.",2014,The Theory of Everything
+Come find me when you wake up!,2014,Edge Of Tomorrow
+"You never would have come here unless you believed you were going to save them. Evolution has yet to transcend that simple barrier. We can care deeply - selflessly - about those we know, but that empathy rarely extends beyond our line of sight.",2014,Interstellar
+"This world’s a treasure, but it’s been telling us to leave for a while now.",2014,Interstellar
+A machine doesn't improvise well because you cannot program a fear of death. Our survival instinct is our greatest source of inspiration.,2014,Interstellar
+Not my tempo.,2014,Whiplash
+Mankind was born on Earth. It was never meant to die here.,2014,Interstellar
+Hardest time to lie to somebody is when they're expecting to be lied to.,2014,The Imitation Game
+Some infinities are bigger than other infinities.,2014,The Fault in our stars
+If an angelic being fell from the sky and tried to live in this world of ours I think even they would commit many wrongs.,2014,Tokyo Ghoul
+"I'm on a roller-coaster that only goes up, my friend.",2014,The Fault in Our Stars
+It's not because we can't take vengeance that we should feel sorry. The real reason to feel sorry... is when one is hung up on revenge and can't live their own life.,2014,Tokyo Ghoul
+Sometimes it's people closest to us who lie to us best,2015,Arrow
+"You become responsible, forever, for everything you tamed.",2015,The Little Prince
+"Mark Watney, Space Pirate.",2015,The Martian
+How do you know the angel and the devil inside me aren’t the same thing?,2015,Daredevil
+"I am the scales of justice, conductor of the choir of death!",2015,Mad Max
+Oh what a day. What a lovely day!,2015,Mad Max
+Witness me!,2015,Mad Max
+I'm going to have to science the s*** out of this.,2015,The Martian
+"Just because someone stumbles and loses their path, doesn’t mean they’re lost forever.",2015,X-Men: Days of Future Past
+Manners maketh man,2015,KINGSMAN: The Secret Service
+Haven't you ever wanted something so ba that it becomes more than a want?,2015,Rebel of the Sands
+"When I get back home, I want all the praise to go towards me.",2015,The Martian
+What a treacherous thing to believe that a person is more than a person?,2015,Paper Towns
+"Examined from another angle, your faults and weaknesses can be weapons",2015,Assassination classroom
+People keeps secret computers don't,2015,Arrow
+That's not how the force works!,2015,Star Wars: Episode VII - The Force Awakens
+"But if you tame me, then we shall need each other, to me you shall be unique in all the world, to you i shall be unique.",2015,The Little Prince
+"Chewie, we're home.",2015,The Force Awakens
+My tastes are very singular.,2015,Fifty Shades of Grey 
+It is only with the heart that one can see rightly; what is essential is invisible to the eye,2015,The Little Prince
+"Like the oldman said, together",2015,Avengers - Age of Ultron
+Power belongs to those who take it.,2015,Mr. Robot
+"That light saber was luke's, and his father's before him, and now it calls to you!",2015,Star Wars: The Force Awakens
+I don't have friends. I got family.,2015,Furious 7
+A bit of madness is key,2016,La La Land
+Secrecy is security and security is victory.,2016,Snowden
+Once in a while when I wake up. I find myself crying.,2016,Kimi No Nawa
+"When life gets you down, you know what you gotta do? Just keep swimming.",2016,Finding Dory
+"Bombs won't stop terrorism, brains will, and we don't have nearly enough of those.",2016,Snowden
+Marriage is buying a house for someone you hate,2016,The Nice Guys
+"At some point, you gotta decide for yourself who you gonna be. Can't let nobody make that decision for you.",2016,Moonlight
+"Life’s a little bit messy. We all make mistakes. No matter what type of animal you are, change starts with you.",2016,Zootopia
+"For Azeroth, for the Alliance!",2016,Warcraft
+"When you love someone, you work it out. You don't just throw it away. You have to be careful with it, you might never get it again.",2016,Nocturnal Animals
+"You're right, Aurora. But the drowning man will always try and drag somebody down with him. It ain't right, but the man's drowning.",2016,Passengers
+Tell me... do you bleed? You will!,2016,BATMAN V SUPERMAN: DAWN OF JUSTICE
+"You can’t buy love, but you can rent it for three minutes!",2016,Deadpool
+"Life’s a little bit messy. We all make mistakes. No matter what type of animal you are, change starts with you.",2016,Zootopia
+I can do this all day!,2016,Captain America: Civil War
+"My dad used to say, 'If you live an ordinary life, all you'll have are ordinary stories. You have to live a life of adventure.'",2016,Passengers
+Start With Where You're From,2016,Lion
+"PWinston... tell them... Tell them all... Whoever comes, whoever it is... I'll kill them. I'll kill them all.",2017,John Wick 2
+Do you know what a Cinnabon is? It's bread! And frosting! And cinnamon! They heat it up! Really hot!,2017,Bee Movie
+"Life is a big trap, made up of little traps... If you listen hard... sometimes you could hear them snap shut.",2017,Sense8
+"Don't do anything I would do, and definitely don't do anything I wouldn't do...",2017,Spider-Man: Homecoming
+"There’s no hiding from this, son.",2017,Dunkirk
+"When all seems lost, a few brave souls can save everything we've ever known.",2017,Transformers : The Light Night
+I promise you ... No matter where we will be in this world ... I promise we will meet again.,2017,Your Name
+"Unfortunately, we’re all human. Except me, of course.",2017,Mr.Robot
+"Break hearts, not promises.",2017,Turtles All the Way Down
+"Every time we get a chance to get ahead they move the finish line, every time.",2017,Hidden Figures
+"When we lose our principles, we invite chaos.",2017,Mr. Robot
+"People walk around, act like they know what hate means. Nah, no one does, until you hate yourself. I mean truly hate yourself. That’s power.",2017,Mr. Robot
+We Shall Never Surrender.,2017,Dunkirk
+I have burrowed underneath your brain. I am nested there. I am the scream in your mind. You will cooperate.,2017,Mr. Robot
+Treasure the experience. Dreams fade away after you wake up,2017,Your Name
+Leave One Wolf Alive and the Sheep are Never Safe,2017,Game of Thrones Season 7
+Love's the most powerful emotion and that makes it the most dangerous,2017,Arrow
+You’re so dark! Are you sure you’re not from the DC universe? I love dubstep!,2018,Deadpool 2
+"If you want to change things in a big way, then you gotta make some big changes.",2018,Creed 2
+Just because something works doesn’t mean it can’t be improved.,2018,Black Panther
+"There is no such thing as magic, just illusion. Things only change when we change them. But you have to do it skillfully, in secret. Then it seems like magic.",2018,Dark
+The darkest nights produce the brightest stars.,2018,Bumblebee
+"That’s one small step for man, one giant leap for mankind.",2018,First Man
+Is this your king?,2018,Black Panther
+"That person who helps others simply because it should or must be done, and because it is the right thing to do, is indeed without a doubt, a real superhero.",2018,Spider-Man: Into the Spider-Verse
+"If we didn’t do what we loved, we wouldn’t exist.",2018,"Adonis, Creed II"
+Sometimes we think we have to do it all on our own. But we don’t.,2018,Creed 2
+I just wanted to take another look at you.,2018,A Star Is Born
+The hardest choices require the strongest wills,2018,Avengers: Infinity War
+"What’s done is done, when we say it’s done.",2018,Mission Impossible: fallout
+Change is like death. You don’t know what it looks like until you’re standing at the gates.,2018,Jurassic World: Fallen Kingdom
+"Being a hero doesn't mean you are invincible. It just means you're brave enough to stand up, and do what's needed.",2018,Two Heroes
+"Sometimes, when you're feeling helpless, the secret is to help someone else. Get out of your own head. Trust me. The next time someone asks for help, say yes.",2018,The Good Place
+"Yeah. Well, you’re right. I thought it was more important to be somebody out there than the damn failure I was here at my own home. Anyway, for what it’s worth, I’m here now.",2018,The Mule
+Whatever it takes!,2018,Avengers : Infinity War
+That does put a smile on my face.,2018,Avengers: Infinity War
+"For I am a Sinner in the hands of an angry God, Bloody Mary, Full of Vodka, Blessed are you among cocktails, pray for me now, at the hour of my death, which I hope is soon. Amen",2018,Archer
+"Being genius is not enough, it takes courage to change people's hearts.",2018,Green Book
+"Elsa, the past is not what it seems. You must find the truth.",2019,Frozen II
+"I remember the story of an evil witch, at the princess she cursed to sleep forever. The story became legend. But this is no fairy tale.",2019,Maleficent:The Mistress of Evil
+I can do this all day,2019,Avengers: Endgame
+I love you 3000.,2019,Avengers: Endgame
+I laugh in the face of danger,2019,The Lion King
+Being brave doesn’t mean you go looking for trouble.,2019,The Lion King
+"Lord knows, I’ve held onto way too much hate in my life. But all we have is now. All we have is now.",2019,Waves
+All I have are negative thoughts.,2019,Joker
+Nothing is funnier than unhappiness.,2019,Avengers: Endgame
+"Is it just me, or is it getting crazier out there?",2019,Joker
+ If you want to get crazy. We can get crazy.,2019,Us
+"A new chapter of my life has begun. Already, I can feel the weight of this crown I wear.",2019,The King
+You all love twisting the knife into one another.,2019,Knives Out
+"Things are very uncomfortable between us, but we’re stuck in a house together.",2019,The Lodge
+Pearl Harbor is the greatest intelligence failure in American history.,2019,Midway
+There’s nothing you can’t do if you try.,2019,Dr Stone
+I just want to escape. Dad always wanted me to travel the world. Someday.,2019,Abominable
+"They have all the money, all the firepower, and they’ll use it. I know, I was one of them.",2019,Dark Waters
+I think the best thing we can do is to let people know that each one of them is precious.,2019,A Beautiful Day in the Neighbourhood
+"Well, I’ve got no leashes, or fences. With me, every day could be an adventure.",2019,The Lady and the Tramp
+"You're really lucky, you know that? You didn't have to wait your whole life to do something special.",2019,El Camino
+"Even if we do ignore the previous data, Broly's latent abilities are quite remarkable.",2019,Dragon Ball Super: Broly
+My mother always tells me to smile and put on a happy face. She told me I had a purpose to bring laughter and joy to the world.,2019,Joker
+How truly magnificent! I think this battle is about to come to a rousing finale!,2019,Dragon Ball Super: Broly
+Today the impossible becomes the possible. ,2019,The Current War
+There is no punchline.,2019,Joker
+"Is it just me, or is it getting crazier out there?’",2019,Joker
+That's MotherF****** street poetic justice.,2019,Shaft
+"Maybe it's because I'm constantly fighting, destro…d to be a lower-class warrior... like my Kakarot.",2019,Dragon Ball Super: Broly
+"These barbarians pretend to be submissive, but the…a sleeping beast down, before it can be awakened.",2019,Dragon Ball Super: Broly
+"Time means nothing. Jeremy Bearimy, baby. We’ll just get through this. And then you and I can chill out in the dot of the I forever.",2019,The Good Place
+The worst part of having a mental illness is people expect you to behave as if you don't,2019,Joker
+"You give me your loyalty, and I’ll guarantee that each and every one of you will have a chance to be a warrior, to actually be a part of history.",2019,The Kill Team
+What do you want most in the world?,2019,Anna
+I do what I do because of my dad. He was a hero. He gave his life for the pursuit of knowledge.,2019,Ad Astra
+"You've got a lot to learn. Here on Earth, we like …have to listen to what the others tell you to do.",2019,Dragon Ball Super: Broly
+Following's not really my style.,2019,Marvel's The Avengers
+I have nothing to prove to you,2019,Captain Marvel
+"Dude, you are on fire.",2019,El Camino
+This is me. This is how I win.,2019,Uncut Gems
+Why have average when you can have extraordinary?,2019,The Boys
+You are my lighting rod.,2019,Avengers: Endgame
+"Bruce Lee: My hands are registered as lethal weapons. We get into a fight, I accidentally kill you... I go to jail.",2019,Once Upon a Time in Hollywood
+"I'm as real as a donut, motherfucker.",2019,Once Upon a Time in Hollywood
+"I used to think that my life was a tragedy. But now I realize, it’s a comedy.",2019,Joker
+"I use the words you taught me. If they don't mean anything any more, teach me others. Or let me be silent.",2019,Avengers: Endgame
+I used to use this little gun when I was a prostitude.,2019,Pineapple Express
+If you want to get crazy. We can get crazy.,2019,Us
+"If you can only do one thing, hone it to perfection. Hone it to the utmost limit!",2019,Kimetsu no Yaiba
+You get what you f***ing deserve !!,2019,Joker
+"You don't listen, do you?",2019,Joker
+Never let your wings be stolen for you,2019,Maleficent:The Mistress of Evil
+"Guns, lots of guns.",2019,John Wick 3: Parabellum
+I was so sure my strength was getting close to it'…on this planet... Then who would I train against.,2019,Dragon Ball Super: Broly
+No amount of money ever bought a second of time.,2019,Avengers: Endgame
+The end is in the beginning and yet you go on.,2019,Avengers: Endgame
+This meeting of The Losers Club has officially begun.,2019,It Chapter Two
+" Spider-Pig, Spider-Pig. Does whatever a Spider-Pig does. Can he swing from a web? No he can't, he's a pig. Look out! He is a Spider-Pig!",2019,The Simpsons Movie
+Let’s do this.,2019,Men in Black
+"It looks as though he's managed to transform someh… his human form, retaining his speed and agility.",2019,Dragon Ball Super: Broly
+I just hope my death makes more cents than my life.,2019,Joker
+I am Iron Man.,2019,Avengers: Endgame
+I didn't know if you were lost. Stick with me. I'll keep you safe.,2019,Us
+This guy's awesome! He's holding his own while still in his base form!,2019,Dragon Ball Super: Broly
+"Murder is murder, it don’t matter who you are.",2019,Black and Blue
+"You know what a lion is? A lion is a strong animal. They do what the fuck they wanna do. Take what they want, eat what they want, they run when they feel like it. Lion.",2019,Between Two Ferns: The Movie
+That was the best acting i've ever seen in my whole life.,2019,Once Upon a Time in Hollywood`
+  var data = papaparse.parse(csv_data);
+  return data?.data;
+}
+
 /**
  * Array with Quote, Character Name, Anime Name
  * @returns Single Quote as an array
@@ -1907,6 +2659,14 @@ function get_random_office_quote() {
   return data[quote_index];
 }
 
+function get_random_movie_quote() {
+  var data = movie_quote_data();
+  var max = data.length;
+  var min = 0;
+  var quote_index = Math.floor(Math.random() * (max - min)) + min;
+  return data[quote_index];
+}
+
 export default function Home() {
   const [currentScore, setCurrentScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
@@ -1918,9 +2678,12 @@ export default function Home() {
   const [currentIncorrectAnswer, setIncorrectAnswer] = useState("");
   const [correctOnLeft, setCorrectOnLeft] = useState(false);
 
-  const modes = ["Anime", "Office"];
+  const modes = ["Anime", "Office", "Movie"];
   const [getFunction, setGetFunction] = useState(() => get_random_anime_quote);
   const [modeIndex, setModeIndex] = useState(0);
+
+  const [currUserName, setUserName] = useState("TEST123");
+  const [hasUsername, setHasUsername] = useState(false);
 
   useEffect(() => {
     document.title = `Guess That ${modes[modeIndex]} Quote`;
@@ -1930,8 +2693,31 @@ export default function Home() {
       setGetFunction(() => get_random_anime_quote);
     } else if (modeIndex == 1) {
       setGetFunction(() => get_random_office_quote);
+    } else if (modeIndex == 2) {
+      setGetFunction(() => get_random_movie_quote)
     }
-  }, [modeIndex])
+    fetch(`/api/${currUserName}`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+      }
+
+    })
+      .then(response => response.json())
+      .then(data => {
+        var resp_data = data["data"][0];
+        // console.log("RESP2:", resp_data);
+        console.log("SDFP:", resp_data?.total_high_score);
+        if (resp_data?.total_high_score == undefined) {
+          setHighScore(0);
+        } else {
+          setHighScore(Math.max(resp_data?.total_high_score, 0));
+        }
+      })
+  }, [modeIndex, currUserName])
+
+  useEffect(() => {
+  }, [currUserName])
 
   useEffect(() => {
     var tempQuote = getFunction();
@@ -1951,15 +2737,50 @@ export default function Home() {
     setCorrectOnLeft(Math.floor(Math.random() * 10) < 5);
   }, [currentScore, currentWrong, getFunction])
 
+  useEffect(() => {
+    if (currentScore == highScore && currentScore > 0) {
+      //   var dbHighScore = 0;
+      //   fetch(`/api/${currUserName}`, {
+      //     method: "GET",
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     }
+
+      //   })
+      //     .then(response => response.json())
+      //     .then(data => {
+      //       var resp_data = data["data"][0];
+      //       // console.log("RESP2:", resp_data);
+      //       dbHighScore = resp_data?.total_high_score;
+      //     })
+      //   if (currentScore > dbHighScore) {
+      // console.log(currentScore, ">", highScore);
+      fetch(`/api/${currUserName}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          high_score: currentScore
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          var resp_data = data["data"];
+          console.log("RESP:", resp_data);
+        })
+    }
+    // }
+  }, [highScore])
 
   function QuoteOptions() {
     var correctButton = (
-      <button key={1} onClick={() => { setCurrentScore(currentScore + 1); setHighScore(Math.max(highScore, currentScore + 1)) }}>
+      <button className="rounded-3xl btn_border" key={1} onClick={() => { setCurrentScore(currentScore + 1); setHighScore(Math.max(highScore, currentScore + 1)) }}>
         {currentCorrectAnswer}
       </button>)
 
     var incorrectButton = (
-      <button key={2} onClick={() => { setCurrentScore(0); setCurrentWrong(currentWrong + 1); setHighScore(Math.max(highScore, currentScore)) }}>
+      <button className="rounded-3xl btn_border" key={2} onClick={() => { setCurrentScore(0); setCurrentWrong(currentWrong + 1); setHighScore(Math.max(highScore, currentScore)) }}>
         {currentIncorrectAnswer}
       </button>)
 
@@ -1988,11 +2809,64 @@ export default function Home() {
     }
   }
 
+  function SignIn() {
+    const [didBadName, setDidBadName] = useState(false);
+    const valid_name = (user_name) => {
+      console.log("WEBN:", user_name);
+      const bad_words = ["porn", "sex", "nude", "naked", "hentai", "boob", "nsfw", "ass", "tit", "cock", "penis", "fuck", "shit", "bitch", "nigg",
+        "raci", "poop"
+      ];
+      for (var i = 0; i < bad_words.length; i++) {
+        if (user_name.includes(bad_words[i])) {
+          return false
+        }
+      }
+      if (user_name.length < 5) {
+        return false
+      }
+      return true
+    }
+
+    async function submit_form() {
+      var form_data = new FormData(document.getElementById("quote_sign_in"));
+      const name = form_data.get("name");
+
+      if (valid_name(name)) {
+        setHasUsername(true);
+        setUserName(name);
+        setDidBadName(false);
+      } else {
+        setDidBadName(true);
+      }
+    }
+
+    return (
+      <div>
+        <form id="quote_sign_in" onSubmit={(e) => { e.preventDefault(); submit_form() }}>
+          <label className="font-semibold" htmlFor="name">Username: </label>
+          <input className="border-2 border-neutral-500 rounded text-neutral-900" type="text" name="name" id="name" required />
+
+          <button className="rounded-lg p-2 btn_border" type="submit">Sign Up/Login</button>
+        </form>
+        {didBadName ? (<div>Make sure you use an appropriate name that is 5+ characters long</div>) : (<div></div>)}
+      </div>
+    )
+  }
+
   return (
     <div className="grid justify-center gap-y-6 py-4">
       <div className="grid grid-rows-1 grid-flow-col justify-center text-2xl gap-x-6">
-        <button onClick={() => {setModeIndex(0)}}>Anime Quote</button>
-        <button onClick={() => {setModeIndex(1)}}>Office Quotes</button>
+        {modes.map((element, idx) => {
+          return (
+            <div key={idx}>
+              <button className="p-3 rounded-lg btn_border" onClick={() => { setModeIndex(idx) }}>{element} Quote</button>
+            </div>
+          )
+        })}
+
+        {hasUsername ? (<div>Successfully Signed In as {currUserName}</div>) : (<SignIn />)}
+        {/* <button className="p-3 rounded-lg" onClick={() => {setModeIndex(0)}}>Anime Quote</button>
+        <button className="p-3 rounded-lg" onClick={() => {setModeIndex(1)}}>Office Quotes</button> */}
       </div>
 
       <div className="grid grid-rows-2 grid-flow-col justify-center text-2xl">
@@ -2012,23 +2886,6 @@ export default function Home() {
           {currentQuote}
         </div>
 
-        {/* {correctOnLeft ? (
-          <>
-            <button onClick={() => { setCurrentScore(currentScore + 1); setHighScore(Math.max(highScore, currentScore)) }}>
-              Correct:{currentCorrectAnime}
-            </button><button onClick={() => { setCurrentScore(0); setCurrentWrong(currentWrong + 1); setHighScore(Math.max(highScore, currentScore)) }}>
-              Incorrect:{currentIncorrectAnime}
-            </button>
-          </>
-        ) : (
-          <>
-            <button onClick={() => { setCurrentScore(0); setCurrentWrong(currentWrong + 1); setHighScore(Math.max(highScore, currentScore)) }}>
-              Incorrect:{currentIncorrectAnime}
-            </button><button onClick={() => { setCurrentScore(currentScore + 1); setHighScore(Math.max(highScore, currentScore)) }}>
-              Correct:{currentCorrectAnime}
-            </button>
-          </>
-        )} */}
         <QuoteOptions />
 
       </div>
