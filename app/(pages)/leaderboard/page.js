@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 
 const LeaderboardDisplay = ({ players }) => {
     // Color constants
@@ -61,7 +62,7 @@ export default function Leaderboard() {
     }, [])
 
     return(
-        <div>
+        <div className="bg-[#0b4a97]"> 
             {/* {leaderboardData.map((user_data, idx) => {
                 return (
                     <div key={idx}>
@@ -69,6 +70,14 @@ export default function Leaderboard() {
                     </div>
                 )
             })} */}
+            <div className="flex flex-row justify-right pt-6 pl-6 space-x-4">
+                <Link key={1} className="rounded-lg text-right border-2 border-white p-2" href="/">
+                    <p className="text-[#059669] text-2xl font-bold">Competitive</p>
+                </Link>
+                <Link key={2} className="rounded-lg text-right border-2 border-white p-2" href="/practice">
+                    <p className="text-[#059669] text-2xl font-bold">Practice</p>
+                </Link>
+            </div>
             <LeaderboardDisplay players={leaderboardData}/>
         </div>
     )
