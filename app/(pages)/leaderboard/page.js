@@ -41,6 +41,7 @@ const LeaderboardDisplay = ({ players }) => {
 export default function Leaderboard() {
     const [leaderboardData, setLeaderboardData] = useState([]);
     useEffect(() => {
+      document.title = `Quote Leaderboard`;
         async function getLeaderboardData() {
             const response = await fetch(`/api`, {
               method: "GET",
