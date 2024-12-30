@@ -7,9 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Link from "next/link";
 
 import {
-    anime_quote_data, office_quote_data, movie_quote_data,
-    get_random_anime_quote, get_random_office_quote, get_random_movie_quote
-} from "@/app/(pages)/quote_info.js";
+    anime_quote_data, office_quote_data, movie_quote_data, song_data, videogame_data,
+    get_random_anime_quote, get_random_office_quote, get_random_movie_quote, get_random_song_quote, get_random_videogame_quote
+  } from "@/app/(pages)/quote_info.js";
+  
 
 const COLORS = {
     background: '#0b4a97',
@@ -50,7 +51,7 @@ export default function Home() {
     const [currentIncorrectAnswer, setIncorrectAnswer] = useState("");
     const [correctOnLeft, setCorrectOnLeft] = useState(false);
 
-    const modes = ["Anime", "Office", "Movie"];
+    const modes = ["Anime", "Office", "Movie", "Songs", "Video Games"];
     const [getFunction, setGetFunction] = useState(() => get_random_anime_quote);
     const [modeIndex, setModeIndex] = useState(0);
     const [timeRemaining, setTimeRemaining] = useState(30);
@@ -65,7 +66,11 @@ export default function Home() {
         } else if (modeIndex == 1) {
             setGetFunction(() => get_random_office_quote);
         } else if (modeIndex == 2) {
-            setGetFunction(() => get_random_movie_quote)
+            setGetFunction(() => get_random_movie_quote);
+        } else if (modeIndex == 3) {
+            setGetFunction(() => get_random_song_quote);
+        } else if (modeIndex == 4) {
+            setGetFunction(() => get_random_videogame_quote);
         }
     }, [modeIndex]);
 
@@ -180,9 +185,11 @@ export default function Home() {
 
                 <Card className="bg-white/10 backdrop-blur-sm p-6">
                     <CardContent className="space-y-6">
-                        <h2 className="text-white text-xl text-center">
-                            Who said this {modes[modeIndex]} quote?
-                        </h2>
+                    <h2 className="text-white text-xl text-center">
+                    {modeIndex<3 ? `Who said the following ${modes[modeIndex]} quote?` : 
+                        (modeIndex == 3 ? `Who wrote the following song?` : 
+                        (modeIndex == 4 ? `What ${modes[modeIndex]} is the following person in?` : `Who said this ${modes[modeIndex]} quote?`))}
+                    </h2>
                         <p className="text-white text-2xl text-center font-medium min-h-[100px] flex items-center justify-center">
                             "{currentQuote}"
                         </p>
