@@ -1,4 +1,3 @@
-import { Regex } from "lucide-react";
 import papaparse from "papaparse";
 
 /**
